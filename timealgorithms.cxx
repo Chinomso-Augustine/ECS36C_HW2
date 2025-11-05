@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include "json.hpp" //For loading json file
+#include <chrono> // Used for timing
+#include <string>
+#include <vector>
 
 //Importing the three sorting files we will be running
 #include "insertionsort.h"
