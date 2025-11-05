@@ -2,6 +2,7 @@
 #include <fstream>
 #include "json.hpp" //For loading json file
 #include <vector>
+#include <ctime>
 
 // Importing the three sorting files we will be running
 #include "insertionsort.h"
@@ -49,9 +50,16 @@ int main(int argc, char **argv)
                 {
                     continue; // move to the next key value pair
                 }
-                InsertionSort(&jsonArrays); 
 
                 // 3: For each sample, run insertionSort, mergeSort, and quickSort
+                
+                clock_t start = clock(); 
+                InsertionSort(&jsonArrays); 
+                clock_t end = clock(); 
+                double insertTime = double(end - start) /CLOCKS_PER_SEC;
+
+                cout<<insertTime<<endl; 
+
 
                 // 4: store all result in a variable
 
