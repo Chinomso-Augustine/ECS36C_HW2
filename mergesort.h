@@ -9,3 +9,7 @@
 void MergeSort(std::vector<int>* numbers);
 void MergeSortRecurse(std::vector<int>* numbers, int i, int k);
 void Merge(std::vector<int>* numbers, int i, int j, int k);
+
+// shared global counters
+extern int numComparisonsMergesort;
+extern int numMemAccessesMergesort;

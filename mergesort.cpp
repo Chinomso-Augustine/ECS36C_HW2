@@ -6,6 +6,9 @@
 
 #include "mergesort.h"
 
+int numComparisonsMergesort;
+int numMemAccessesMergesort;
+
 void MergeSort(std::vector<int>* numbers) {
    MergeSortRecurse(numbers, 0, numbers->size() - 1);
 }
@@ -13,7 +16,7 @@ void MergeSort(std::vector<int>* numbers) {
 
 void MergeSortRecurse(std::vector<int>* numbers, int i, int k) {
    int j = 0;
-   
+   numComparisonsMergesort++;
    if (i < k) {
       j = (i + k) / 2;  // Find the midpoint in the partition
       
@@ -40,20 +43,27 @@ void Merge(std::vector<int>* numbers, int i, int j, int k) {
    
    // Add smallest element from left or right partition to merged numbers
    while (leftPos <= j && rightPos <= k) {
+      numComparisonsMergesort++; // Incrementing the number of comparisons by 1
+      numMemAccessesMergesort+=2; // Increasing the number of memoryaccesses by 1
+      
       if ((*numbers)[leftPos] < (*numbers)[rightPos]) {
+         numMemAccessesMergesort+=2; // Increasing the number of memoryaccesses by 2
          mergedNumbers[mergePos] = (*numbers)[leftPos];
          ++leftPos;
       }
       else {
+         numMemAccessesMergesort += 2; // Increasing the number of memoryaccesses by 2
          mergedNumbers[mergePos] = (*numbers)[rightPos];
+        // numMemAccessesMergesort += 2; // Increasing the number of memoryaccesses by 2
          ++rightPos;
          
       }
       ++mergePos;
    }
-   
+   //numComparisonsMergesort+=2;
    // If left partition is not empty, add remaining elements to merged numbers
    while (leftPos <= j) {
+      numMemAccessesMergesort+=2; // condition check
       mergedNumbers[mergePos] = (*numbers)[leftPos];
       ++leftPos;
       ++mergePos;
@@ -61,6 +71,7 @@ void Merge(std::vector<int>* numbers, int i, int j, int k) {
    
    // If right partition is not empty, add remaining elements to merged numbers
    while (rightPos <= k) {
+      numMemAccessesMergesort+=2; // Increasing the number of memoryaccesses by 2
       mergedNumbers[mergePos] = (*numbers)[rightPos];
       ++rightPos;
       ++mergePos;
@@ -68,6 +79,9 @@ void Merge(std::vector<int>* numbers, int i, int j, int k) {
    
    // Copy merge number back to numbers
    for (mergePos = 0; mergePos < mergedSize; ++mergePos) {
+      numMemAccessesMergesort+=2; // Increasing the number of memoryaccesses by 2
       (*numbers)[i + mergePos] = mergedNumbers[mergePos];
+      
    }
+   numComparisonsMergesort++;
 }

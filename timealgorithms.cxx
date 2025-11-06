@@ -1,16 +1,28 @@
 #include <iostream>
 #include <fstream>
-#include "json.hpp" //For loading json file
 #include <vector>
 #include <ctime>
+#include <string>
+#include <iomanip>
+#include <algorithm>
 
-// Importing the three sorting files we will be running
+#include "json.hpp" //For loading json file
 #include "insertionsort.h"
 #include "mergesort.h"
 #include "quicksort.h"
 
 using namespace std;         // Avoids using std everytime
 using json = nlohmann::json; // allows access to nlohmann just by calling json
+
+// Accessing the variable counters declared in each of the sorting
+extern int numComparisonsInsertion;
+extern int numMemAccessesInsertion;
+
+extern int numComparisonsMergesort;
+extern int numMemAccessesMergesort;
+
+extern int numComparisonsQuicksort;
+extern int numMemAccessesQuicksort;
 
 int main(int argc, char **argv)
 {
@@ -25,7 +37,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    string jsonFile = argv[1]; // getting jsonFile from command line
+    string jsonFile = argv[1]; // getting jsonFile from command line and storing it into a string variable
 
     ifstream inputFile(jsonFile); // Reading jsonFile
     if (!inputFile.is_open())
@@ -34,37 +46,76 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    else
+    json data; // Declaring a json data type that will store the file data
+    try
     {
-        json data;         // Declaring a json data type that will store the file data
         inputFile >> data; // Pushing or reading file inputs into data
-
-        for (auto items = data.begin(); items != data.end(); ++items)
-        { // start from the beginning and don't stop until we reach the end of data
-            {
-                string key = items.key();   // holds json keys like sample1, sample2,...
-                vector<int> jsonArrays = items.value().get<vector<int>>(); // stores values as a vector
-
-                // skipping metadata because it is not an array
-                if (key == "metadata")
-                {
-                    continue; // move to the next key value pair
-                }
-
-                // 3: For each sample, run insertionSort, mergeSort, and quickSort
-                
-                clock_t start = clock(); 
-                InsertionSort(&jsonArrays); 
-                clock_t end = clock(); 
-                double insertTime = double(end - start) /CLOCKS_PER_SEC;
-
-                cout<<insertTime<<endl; 
-
-
-                // 4: store all result in a variable
-                //Testing
-                // 5: Print result in cvs format
-            }
-        }
     }
+    catch (const json::parse_error &e)
+    {
+        cerr << "There is a problem with your JSON parsing: " << e.what() << endl;
+        return 1;
+    }
+    inputFile.close(); // Closing the file once we are done reading it
+
+    cout.precision(6);
+    // Print CSV header exactly as autograder expect
+    cout << "Sample,InsertionSortTime,InsertionSortCompares,InsertionSortMemaccess,"
+         << "MergeSortTime,MergeSortCompares,MergeSortMemaccess,"
+         << "QuickSortTime,QuickSortCompares,QuickSortMemaccess\n"; // ✅ Added newline after header
+
+    for (auto it = data.begin(); it != data.end(); ++it)
+    {
+        string sampleName = it.key();
+
+        if (sampleName == "metadata")
+            continue;
+
+        vector<int> jsonArrays;
+        try
+        {
+            jsonArrays = it.value().get<vector<int>>();
+        }
+        catch (const json::exception &e)
+        {
+            cerr << "There was an error reading the sample " << sampleName << ": " << e.what() << " (Expected array of numbers)." << endl;
+            continue;
+        }
+
+        // Making sure that all 3 of these sorting algorithms are sorting the exact same data
+        vector<int> insertionArray = jsonArrays;
+        vector<int> mergesortArray = jsonArrays;
+        vector<int> quicksortArray = jsonArrays;
+
+        // Insertion Sort
+        numComparisonsInsertion = 0;
+        numMemAccessesInsertion = 0;
+        clock_t start = clock();
+        InsertionSort(&insertionArray);
+        clock_t end = clock();
+        double insertionTime = double(end - start) / CLOCKS_PER_SEC;
+
+        // Merge Sort
+        numComparisonsMergesort = 0;
+        numMemAccessesMergesort = 0;
+        start = clock();                                         // Starting the timer
+        MergeSort(&mergesortArray);                              // Running merge sort
+        end = clock();                                           // Ending the timer
+        double mergeTime = double(end - start) / CLOCKS_PER_SEC; // Getting the time in seconds
+
+        // Quick Sort
+        numComparisonsQuicksort = 0;
+        numMemAccessesQuicksort = 0;
+        start = clock();                                         // Starting the timer
+        QuickSort(&quicksortArray);                              // Running Quick sort
+        end = clock();                                           // Ending the timer
+        double quickTime = double(end - start) / CLOCKS_PER_SEC; // Getting the time in seconds
+
+        // ✅ Use '\n' instead of endl to avoid extra blank lines
+        cout << sampleName << ","
+             << insertionTime << "," << numComparisonsInsertion << "," << numMemAccessesInsertion << ","
+             << mergeTime << "," << numComparisonsMergesort << "," << numMemAccessesMergesort << ","
+             << quickTime << "," << numComparisonsQuicksort << "," << numMemAccessesQuicksort << '\n';
+    }
+    return 0;
 }

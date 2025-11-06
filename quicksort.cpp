@@ -6,6 +6,8 @@
 
 #include "quicksort.h"
 
+int numComparisonsQuicksort;
+int numMemAccessesQuicksort;
 
 void QuickSort(std::vector<int>* numbers) {
    QuickSortRecurse(numbers, 0, numbers->size() - 1);
@@ -13,68 +15,62 @@ void QuickSort(std::vector<int>* numbers) {
 
 void QuickSortRecurse(std::vector<int>* numbers, int i, int k) {
    int j = 0;
-   
+   numComparisonsQuicksort++; // for base case check
+
    /* Base case: If there are 1 or zero elements to sort,
     partition is already sorted */
    if (i >= k) {
       return;
    }
-   
+
    /* Partition the data within the array. Value j returned
     from partitioning is location of last element in low partition. */
    j = Partition(numbers, i, k);
-   
+
    /* Recursively sort low partition (i to j) and
     high partition (j + 1 to k) */
    QuickSortRecurse(numbers, i, j);
    QuickSortRecurse(numbers, j + 1, k);
-   
-   return;
 }
 
 int Partition(std::vector<int>* numbers, int i, int k) {
-   int l = 0;
-   int h = 0;
-   int midpoint = 0;
-   int pivot = 0;
-   int temp = 0;
+   int l = i;
+   int h = k;
+   int midpoint = i + (k - i) / 2;
+   int pivot = (*numbers)[midpoint];
+   int temp;
    bool done = false;
-   
-   /* Pick middle element as pivot */
-   midpoint = i + (k - i) / 2;
-   pivot = (*numbers)[midpoint];
-   
-   l = i;
-   h = k;
-   
+
+   numMemAccessesQuicksort++; // read pivot once
+
    while (!done) {
-      
-      /* Increment l while numbers[l] < pivot */
+      numComparisonsQuicksort++; // while check
+
+      // Increment l while numbers[l] < pivot
       while ((*numbers)[l] < pivot) {
+         numComparisonsQuicksort++;    // comparison
+         numMemAccessesQuicksort += 2; // two reads
          ++l;
       }
-      
-      /* Decrement h while pivot < numbers[h] */
+
+      // Decrement h while pivot < numbers[h]
       while (pivot < (*numbers)[h]) {
+         numComparisonsQuicksort++;    // comparison
+         numMemAccessesQuicksort += 2; // two reads
          --h;
       }
-      
-      /* If there are zero or one elements remaining,
-       all numbers are partitioned. Return h */
+      numComparisonsQuicksort++; // for l >= h
+      numComparisonsQuicksort++; // for l >= h
       if (l >= h) {
          done = true;
-      }
-      else {
-         /* Swap numbers[l] and numbers[h],
-          update l and h */
+      } else {
+         // Swap numbers[l] and numbers[h]
          temp = (*numbers)[l];
          (*numbers)[l] = (*numbers)[h];
          (*numbers)[h] = temp;
-         
          ++l;
          --h;
       }
    }
-   
    return h;
 }
