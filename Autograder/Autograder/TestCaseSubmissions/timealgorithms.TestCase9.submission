@@ -1,80 +1,80 @@
-Sample01,InsertionSort,10,4e-06
-Sample01,QuickSort,10,3e-06
+Sample01,InsertionSort,10,1e-06
+Sample01,QuickSort,10,0
 
-Sample01,MergeSort,10,1.4e-05
-Sample01,4e-06,31,110,
-1.4e-05,19,174,
-3e-06,25,34
+Sample01,MergeSort,10,3e-06
+Sample01,1e-06,31,110,
+3e-06,19,174,
+0,25,34
 
-Sample02,InsertionSort,10,2e-06
-Sample02,QuickSort,10,2e-06
+Sample02,InsertionSort,10,1e-06
+Sample02,QuickSort,10,0
 
-Sample02,MergeSort,10,1.1e-05
-Sample02,2e-06,36,135,
-1.1e-05,19,174,
-2e-06,25,34
+Sample02,MergeSort,10,2e-06
+Sample02,1e-06,36,135,
+2e-06,19,174,
+0,25,34
 
-Sample03,InsertionSort,10,3e-06
-Sample03,QuickSort,10,2e-06
+Sample03,InsertionSort,10,1e-06
+Sample03,QuickSort,10,0
 
-Sample03,MergeSort,10,9e-06
-Sample03,3e-06,35,130,
-9e-06,19,174,
-2e-06,25,34
+Sample03,MergeSort,10,2e-06
+Sample03,1e-06,35,130,
+2e-06,19,174,
+0,25,34
 
-Sample04,InsertionSort,10,2e-06
-Sample04,QuickSort,10,1e-06
+Sample04,InsertionSort,10,1e-06
+Sample04,QuickSort,10,0
 
-Sample04,MergeSort,10,2e-05
-Sample04,2e-06,34,125,
-2e-05,19,174,
+Sample04,MergeSort,10,3e-06
+Sample04,1e-06,34,125,
+3e-06,19,174,
+0,25,34
+
+Sample05,InsertionSort,10,1e-06
+Sample05,QuickSort,10,1e-06
+
+Sample05,MergeSort,10,3e-06
+Sample05,1e-06,39,150,
+3e-06,19,174,
 1e-06,25,34
 
-Sample05,InsertionSort,10,5e-06
-Sample05,QuickSort,10,3e-06
+Sample06,InsertionSort,10,0
+Sample06,QuickSort,10,0
 
-Sample05,MergeSort,10,1.3e-05
-Sample05,5e-06,39,150,
-1.3e-05,19,174,
-3e-06,25,34
+Sample06,MergeSort,10,2e-06
+Sample06,0,28,95,
+2e-06,19,174,
+0,25,34
 
-Sample06,InsertionSort,10,5e-06
-Sample06,QuickSort,10,4e-06
+Sample07,InsertionSort,10,1e-06
+Sample07,QuickSort,10,0
 
-Sample06,MergeSort,10,1.7e-05
-Sample06,5e-06,28,95,
-1.7e-05,19,174,
-4e-06,25,34
+Sample07,MergeSort,10,2e-06
+Sample07,1e-06,32,115,
+2e-06,19,174,
+0,25,34
 
-Sample07,InsertionSort,10,4e-06
-Sample07,QuickSort,10,3e-06
+Sample08,InsertionSort,10,0
+Sample08,QuickSort,10,0
 
-Sample07,MergeSort,10,2.3e-05
-Sample07,4e-06,32,115,
-2.3e-05,19,174,
-3e-06,25,34
+Sample08,MergeSort,10,2e-06
+Sample08,0,36,135,
+2e-06,19,174,
+0,25,34
 
-Sample08,InsertionSort,10,4e-06
-Sample08,QuickSort,10,4e-06
+Sample09,InsertionSort,10,0
+Sample09,QuickSort,10,0
 
-Sample08,MergeSort,10,1.5e-05
-Sample08,4e-06,36,135,
-1.5e-05,19,174,
-4e-06,25,34
+Sample09,MergeSort,10,2e-06
+Sample09,0,34,125,
+2e-06,19,174,
+0,25,34
 
-Sample09,InsertionSort,10,4e-06
-Sample09,QuickSort,10,6e-06
+Sample10,InsertionSort,10,1e-06
+Sample10,QuickSort,10,1e-06
 
-Sample09,MergeSort,10,2.2e-05
-Sample09,4e-06,34,125,
-2.2e-05,19,174,
-6e-06,25,34
-
-Sample10,InsertionSort,10,5e-06
-Sample10,QuickSort,10,3e-06
-
-Sample10,MergeSort,10,1.4e-05
-Sample10,5e-06,36,135,
-1.4e-05,19,174,
-3e-06,25,34
+Sample10,MergeSort,10,3e-06
+Sample10,1e-06,36,135,
+3e-06,19,174,
+1e-06,25,34
 
