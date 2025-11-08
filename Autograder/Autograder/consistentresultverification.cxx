@@ -1,94 +1,134 @@
-// Declaring the necessary libraries we will be using in this second executable
+// consistentresultverification.cxx
+// Author: Chinomso Augustine
+// Purpose: Compare two JSON files containing sorted samples and report any mismatches.
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <algorithm>
 #include "json.hpp"
 
-using namespace std;
-using json = nlohmann::json; // Created a name for efficiency for the json file we will be using. 
+using json = nlohmann::json; //Created a name for efficiency for the json file we will be using. 
+using namespace std; //This avoids using std everytime 
 
-// Making sure that the user provided the correct number of file names (2)
+// Function to read and parse a JSON file
+json readMyJsonFile(const string &fileToRead)
+{
+    ifstream file(fileToRead); // Create an input file stream to open the JSON file for reading
 
-int main(int argc, char** argv) {
-    if (argc != 3) {
-        std::cerr <<"Incorrect usage, provide exactly two JSON files to work with." <<std::endl;
-        return 1;
-    }
-    // Storing both of these json files into variables to easily use later on
-    std::string firstFile = argv[1];
-    std::string secondFile = argv[2];
-
-    // Reading the first json file and making sure that it exists.
-    ifstream file1(firstFile); 
-    if(!file1.is_open()) {
-        cerr <<" File 1 cannot be opened: " << firstFile << endl;
-        return 1;
+    // Check if the file can be opened successfully
+    if (!file.is_open())
+    {
+        cerr << "Error: Cannot open file " << fileToRead << endl; // Print error message if unable to open file
+        exit(1); // Exit program with error code 1
     }
 
-    json file1Contents; // Holding the parsed json file from file1Contents
-    file1 >> file1Contents; // Parsing through the first json file into file1
-    file1.close(); // Closing the first file
-
-    // Opening and reading the second file and making sure that it exists.
-    ifstream file2(secondFile);
-    if(!file2.is_open()) {
-        cerr <<" File 2 cannot be opened: " << secondFile << endl;
-        return 1;
+    json data; // Create a JSON object to store the parsed data
+    
+    try
+    {
+        file >> data; //push file contents into the JSON object
+    }
+    catch (const exception &e)
+    {
+        cerr << "Error: Invalid JSON format in " << fileToRead << endl; // Catch parsing errors
+        exit(1); // Exit if file format is invalid
     }
 
-    json file2Contents; //Holding the parsed json file from file2Contents
-    file2 >> file2Contents; // Parsing through the second json file2
-    file2.close(); // Closing the second file.
+    file.close(); // Close the file after reading
+    return data;  // Return the parsed JSON data
+}
 
-    int totalmismatches = 0; // Keeping count of the total number of mismatches between both json files
-    json outputs_to_json; // Storing all of the outputs of both files together in one json.
+int main(int argc, char *argv[])
+{
+    // checking that two JSON filenames are provided as command in the command line
+    if (argc != 3)
+    {
+        cerr <<"Either file is more or less than 2. Please provide only 2 json files"<< endl;
+        return 1; // Exit if the number of files are incorrect
+    }
 
-    // Gathering metadata from both of the json files
-    json metadatagroup1 = file1Contents["metadata"];
-    json metadatagroup2 = file2Contents["metadata"];
+    string file1Name = argv[1]; // Store first filename
+    string file2Name = argv[2]; // Store second filename
 
-    // Creating the metadata section for both of the json files
+    json result; // JSON object to store the final comparison results
+    int conflictCounter = 0;  // Counter to keep track of the number of mismatched samples we found
 
-    outputs_to_json["metadata"]["File1"]["name"] = firstFile; // Storing the first filename
-    outputs_to_json["metadata"]["File1"]["arraySize"] = metadatagroup1["arraySize"]; // Storing the array size for the first file
-    outputs_to_json["metadata"]["File1"]["numSamples"] = metadatagroup1["numSamples"]; // Storing the number of samples for the first file
+    // Reading both input JSON files using readMyJsonFile created. 
+    json file1 = readMyJsonFile(file1Name); //file one 
+    json file2 = readMyJsonFile(file2Name);//file 2
 
-    outputs_to_json["metadata"]["File2"]["name"] = secondFile; // Storing the second filename
-    outputs_to_json["metadata"]["File2"]["arraySize"] = metadatagroup2["arraySize"]; // Storing the array size for the second file
-    outputs_to_json["metadata"]["File2"]["numSamples"] = metadatagroup2["numSamples"]; // Storing the number of samples for the second file
+    // Loop through all key-value pairs in the first JSON file
+    for (auto items = file1.begin(); items != file1.end(); ++items)
+    {
+        string sampleName = items.key(); // Extract the current sample's key name
 
-    // Gathering the total number of samples in both files
-    int totalNumSamples = metadatagroup1["numSamples"];
-    int newArraySize = metadatagroup1["arraySize"]; // Figuring out total number of values in the array
-    for(int sampVal = 1; sampVal <= totalNumSamples; sampVal++) { // Loops through each sample in both Json files.
-        string SampName = "Sample" + std::to_string(sampVal); // Turns the numbers 1,2,3 and so on into the Sample names. Ex. "Sample1"
-        json firstFileArray = file1Contents[SampName]; // Creating array for first file/accessing data from first file.
-        json secondFileArray = file2Contents[SampName]; // Creating array for second file/accessing data from second file.
-        
-        bool anyMismatch = false; // Tells us if there are any mismatches between the output samples in each of the json files.
-        json mismatchList; // Storing the positions of the mismatches between the output samples
-       
-        for (int pos = 0; pos < newArraySize; pos++) { // Comparing each number in the arrays
-            int numFirstFile = firstFileArray[pos]; // Getting value at position from first json file
-            int numSecondFile = secondFileArray[pos]; // Getting value at position from second json file
-            
-            if(numFirstFile != numSecondFile) { // Checking to see if the value at the position in the first sample array is the same as value in the second array sample
-                json sampDifferenceArray = json::array(); // Making list to show possible differences in numbers from both json sample in the files
-                sampDifferenceArray.push_back(numFirstFile); // Adding the first number into the new array from first file
-                sampDifferenceArray.push_back(numSecondFile); // Adding second number into the new array from the second file
-                mismatchList[to_string(pos)] = sampDifferenceArray; // Saving the difference in values with the positions used
-                anyMismatch = true; // Showed that we found a mismatch in the value
+        // Skipping metadata section since it's not part of the data comparison. But it will be use later
+        if (sampleName == "metadata")
+            continue; //Move on
+
+        // checking If the second file does not contain the same sample
+        if (!file2.count(sampleName))
+        {
+            conflictCounter++; // Increment conflict count
+            result[sampleName]["Mismatches"]["missing"] = "Sample missing from second file"; // Record missing info
+            continue; // Skip the rest of the checks
+        }
+
+        // Retrieving the array from both files
+        auto &array1 = items.value(); //Obtains array1 values 
+        auto &array2 = file2[sampleName]; //Array2 sample 
+
+        json mismatches;  // JSON object to store mismatched indices and values
+        bool hasMismatches = false; // Assuming we do not have a mismatches at the moment
+        int minSize = min(array1.size(), array2.size()); // Use smaller size to avoid out-of-bounds errors which could cause segfault
+
+        // Compare the elements from both arrays
+        for (int i = 0; i < minSize; i++)
+        {
+            if (array1[i] != array2[i]) // This checks for mismatches 
+            {
+                hasMismatches = true; //Onces above condition is true, now we have a mismatch
+                mismatches[to_string(i)] = {array1[i], array2[i]}; // Record mismatched elements with their indices
             }
         }
-        if(anyMismatch) { // Looping through the key/value pairs to see the mismatches between the samples in each of the files
-            totalmismatches++;
-            outputs_to_json[SampName][firstFile] = firstFileArray; // Updates the new section of the JSON file in the "Sample1" - adds another key under file1.json
-            outputs_to_json[SampName][secondFile] = secondFileArray; // Updates the new sectioction of the JSON file in the "Sample2" - adds another key under file2.json
-            outputs_to_json[SampName]["Mismatches"] = mismatchList; // Collecting all of the possible mismatches between both of the samples of data from both files
+
+        // Recording size differences If one array is longer than the other.
+        if (array1.size() != array2.size())
+        {
+            hasMismatches = true; //Another mistmatche detected
+            mismatches["lengthMismatch"] = {array1.size(), array2.size()}; //Saves the differences of both array
         }
-    } 
-    
-    outputs_to_json["metadata"]["samplesWithConflictingResults"] = totalmismatches;
-    cout << outputs_to_json.dump(4) << endl; // Printing the format of the new updated JSON in an easy to read format. .dump() is from the nlohmann json library
-    return 0;
+
+        // If mismatches were found, store the full arrays and mismatches under this sample
+        if (hasMismatches)
+        {
+            conflictCounter++; // Increment conflict count
+            result[sampleName][file1Name] = array1; // Storing sample data from first file
+            result[sampleName][file2Name] = array2; // Storing sample data from second file
+            result[sampleName]["Mismatches"] = mismatches; // Storing mismatch information
+        }
+    }
+
+    // Include metadata information for the first file if there is one
+    if (file1.count("metadata")) //checking for "metadata"
+    {
+        result["metadata"]["File1"]["name"] = file1Name; //Storing first file name
+        result["metadata"]["File1"]["numSamples"] = file1["metadata"]["numSamples"]; //storing first file numSample
+        result["metadata"]["File1"]["arraySize"] = file1["metadata"]["arraySize"]; //Storing first file arraysize
+    }
+
+    // metadata info for the second file 
+    if (file2.count("metadata")) //checking for metadata
+    {
+        result["metadata"]["File2"]["name"] = file2Name; //Storing second file name
+        result["metadata"]["File2"]["numSamples"] = file2["metadata"]["numSamples"]; //storing file 2 numSamples
+        result["metadata"]["File2"]["arraySize"] = file2["metadata"]["arraySize"]; //storing file 2 arraysize 
+    }
+
+    // Adding total number of conflicting samples to the metadata section
+    result["metadata"]["samplesWithConflictingResults"] = conflictCounter;
+
+    // Printing the final result in easy and readable json format
+    cout << result.dump(4) << endl;
+
+    return 0; // indicates that program ran successfully
 }
