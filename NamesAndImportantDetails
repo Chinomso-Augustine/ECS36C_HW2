@@ -1,0 +1,13 @@
+Name: Bhardwaj, Aneesh
+Student ID: 922029509
+
+Name: Augustine, Chinomso
+Student ID: 922260151
+
+Note: We were super super close to getting the second consistentresult verification file to run but we kept getting the same exact error 
+over and over again even after debugging and even after looking at it over and over again we still were not able to figure it out. The error was
+something along the lines of "./consistentresultverification TestCases/TestCase1.json TestCases/TestCase2.json terminate called after throwing an instance of 'nlohmann::detail::type_error' what(): [json.exception.type_error.302] type must be number, but is null ./Autograder.sh: line 70: 123006 Aborted (core dumped) ./consistentresultverification TestCases/TestCase$i.json TestCases/TestCase$((i + 1 == 101 ? 1 : i + 1)).json > TestCaseSubmissions/consistentresultverification.TestCase$i-TestCase$((i + 1 == 101 ? 1 : i + 1)). submission Now grading: ./consistentresultverification TestCases/TestCase2.json TestCases/TestCase3.json terminate called after throwing an instance of 'nlohmann::detail::type_error' what(): [json.exception.type_error.302] type must be number, but is null" 
+
+We weren't sure how to go about with this despite the debugging and despite the research so we were stuck on this. The reason why we were confused was that we didn't know why it was saying that the type must be a number but it is null since in all of the sample example json files from the assignment download provided by the instructor all of them were numbers and they all seemed fine so I am not sure why this error popped up. So when grading, please take into account
+this situation and that the code seemed pretty correct and made sense as we understood what was going on but this was a hurdle that kept on bugging us. 
+ 
