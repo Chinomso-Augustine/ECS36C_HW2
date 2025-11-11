@@ -5,7 +5,6 @@
 #include <string>
 #include <iomanip>
 #include <algorithm>
-
 #include "json.hpp" //For loading json file
 #include "insertionsort.h"
 #include "mergesort.h"
@@ -23,6 +22,7 @@ extern int numMemAccessesMergesort;
 
 extern int numComparisonsQuicksort;
 extern int numMemAccessesQuicksort;
+
 
 int main(int argc, char **argv)
 {
@@ -71,16 +71,7 @@ int main(int argc, char **argv)
         if (sampleName == "metadata")
             continue;
 
-        vector<int> jsonArrays;
-        try
-        {
-            jsonArrays = it.value().get<vector<int>>();
-        }
-        catch (const json::exception &e)
-        {
-            cerr << "There was an error reading the sample " << sampleName << ": " << e.what() << " (Expected array of numbers)." << endl;
-            continue;
-        }
+        vector<int> jsonArrays = it.value().get<vector<int>>();
 
         // Making sure that all 3 of these sorting algorithms are sorting the exact same data
         vector<int> insertionArray = jsonArrays;
@@ -111,7 +102,7 @@ int main(int argc, char **argv)
         end = clock();                                           // Ending the timer
         double quickTime = double(end - start) / CLOCKS_PER_SEC; // Getting the time in seconds
 
-        // ✅ Use '\n' instead of endl to avoid extra blank lines
+        // Use '\n' instead of endl to avoid extra blank lines
         cout << sampleName << ","
              << insertionTime << "," << numComparisonsInsertion << "," << numMemAccessesInsertion << ","
              << mergeTime << "," << numComparisonsMergesort << "," << numMemAccessesMergesort << ","

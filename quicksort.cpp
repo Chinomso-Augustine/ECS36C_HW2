@@ -1,25 +1,28 @@
 // Quicksort
-// 
+//
 // Author: Rob Gysel
 // ECS60, UC Davis
 // Adapted from: Lysecky & Vahid "Data Structures Essentials", zyBooks
 
 #include "quicksort.h"
 
-int numComparisonsQuicksort;
-int numMemAccessesQuicksort;
+int numComparisonsQuicksort = 0;
+int numMemAccessesQuicksort = 0;
 
-void QuickSort(std::vector<int>* numbers) {
+void QuickSort(std::vector<int> *numbers)
+{
    QuickSortRecurse(numbers, 0, numbers->size() - 1);
 }
 
-void QuickSortRecurse(std::vector<int>* numbers, int i, int k) {
+void QuickSortRecurse(std::vector<int> *numbers, int i, int k)
+{
    int j = 0;
-   numComparisonsQuicksort++; // for base case check
+   // numComparisonsQuick++; // for base case check
 
    /* Base case: If there are 1 or zero elements to sort,
     partition is already sorted */
-   if (i >= k) {
+   if (i >= k)
+   {
       return;
    }
 
@@ -33,7 +36,8 @@ void QuickSortRecurse(std::vector<int>* numbers, int i, int k) {
    QuickSortRecurse(numbers, j + 1, k);
 }
 
-int Partition(std::vector<int>* numbers, int i, int k) {
+int Partition(std::vector<int> *numbers, int i, int k)
+{
    int l = i;
    int h = k;
    int midpoint = i + (k - i) / 2;
@@ -43,31 +47,38 @@ int Partition(std::vector<int>* numbers, int i, int k) {
 
    numMemAccessesQuicksort++; // read pivot once
 
-   while (!done) {
-      numComparisonsQuicksort++; // while check
+   while (!done)
+   {
+      // numComparisonsQuick++; // while check
 
       // Increment l while numbers[l] < pivot
-      while ((*numbers)[l] < pivot) {
-         numComparisonsQuicksort++;    // comparison
-         numMemAccessesQuicksort += 2; // two reads
+      while ((*numbers)[l] < pivot)
+      {
+         numComparisonsQuicksort++; // comparison
+         numMemAccessesQuicksort++; // two reads
          ++l;
       }
 
       // Decrement h while pivot < numbers[h]
-      while (pivot < (*numbers)[h]) {
-         numComparisonsQuicksort++;    // comparison
-         numMemAccessesQuicksort += 2; // two reads
+      while (pivot < (*numbers)[h])
+      {
+         numComparisonsQuicksort++; // comparison
+         numMemAccessesQuicksort++; // two reads
          --h;
       }
-      numComparisonsQuicksort++; // for l >= h
-      numComparisonsQuicksort++; // for l >= h
-      if (l >= h) {
+      // numComparisonsQuick++; // for l >= h
+      // numComparisonsQuick++; // for l >= h
+      if (l >= h)
+      {
          done = true;
-      } else {
+      }
+      else
+      {
          // Swap numbers[l] and numbers[h]
          temp = (*numbers)[l];
          (*numbers)[l] = (*numbers)[h];
          (*numbers)[h] = temp;
+         numMemAccessesQuicksort += 4;
          ++l;
          --h;
       }

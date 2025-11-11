@@ -5,8 +5,8 @@
 // Adapted from: Lysecky & Vahid "Data Structures Essentials", zyBooks
 
 #include "insertionsort.h"
- int numComparisonsInsertion;
- int numMemAccessesInsertion;
+ int numComparisonsInsertion =0;
+ int numMemAccessesInsertion =0;
 
 void InsertionSort(std::vector<int>* numbers) {
    int i = 0;
@@ -14,23 +14,22 @@ void InsertionSort(std::vector<int>* numbers) {
    int temp = 0;  // Temporary variable for swap
 
    for (i = 1; i < numbers->size(); ++i) {
+              numComparisonsInsertion++; // i < size()
+
       j = i;
       // Insert numbers[i] into sorted part
       // stopping once numbers[i] in correct position
       while (j > 0 && (*numbers)[j] < (*numbers)[j - 1]) {
-         numComparisonsInsertion+=1; // Incrementing the number of comparisons by 2
-         numMemAccessesInsertion+=4; // Incrementing the number of memory access by 2
+         numComparisonsInsertion+= 2; // Incrementing the number of comparisons by 1
+         numMemAccessesInsertion+=6; // Incrementing the number of memory access by 2
+         
          // Swap numbers[j] and numbers[j - 1]
          temp = (*numbers)[j];
          (*numbers)[j] = (*numbers)[j - 1];
          (*numbers)[j - 1] = temp;
-        // numMemAccessesInsertion+=4; // Incrementing the number of memory accesses by 4
          --j;
       }
-      numComparisonsInsertion+=1;
-      //numMemAccessesInsertion+=2;
-   }
-  // numComparisonsInsertion++;
-   
+      numComparisonsInsertion++;
+   }   
    return;
 }

@@ -7,3 +7,7 @@
 #include <vector>
 
 void InsertionSort(std::vector<int>* numbers);
+
+// shared global counters
+extern int numComparisonsInsertion;
+extern int numMemAccessesInsertion;
